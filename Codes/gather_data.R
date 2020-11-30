@@ -23,7 +23,7 @@ pop_raw <- WDI(indicator=c('SP.POP.TOTL'),
                country="all", start=2019, end=2019)
 
 # Save the raw files
-my_path <- "~/Desktop/ECBS-5208-Coding-1-Business-Analytics/assignment_covid/Data/raw/"
+my_path <- "/Users/wodediannao/Desktop/Covid_Analysis/Data/raw/"
 # covid data
 write_csv(covid_raw, paste0(my_path,'covid_23_10_2020_raw.csv'))
 # population data

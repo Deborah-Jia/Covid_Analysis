@@ -5,13 +5,14 @@ date: "11/29/2020"
 output:
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 # Introduction
 This analysis aims to find the pattern of association between registered number of confirmed and death covid-19 cases on 23rd, Oct.2020. 
 
-Measured in numbers, variables include confirmed cases (as outcome variable) and death cases(as explanatory variable) of all countries, on 23rd, Oct.2020, with confirmed and death cases of all countries from day one till now, as population. 
+Measured in numbers, variables include confirmed cases (as an outcome variable) and death cases(as a explanatory variable) of all countries, on 23rd, Oct.2020, with confirmed and death cases of all countries from day one till now, as the population. 
 
-With data from [CSSE]('https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_daily_reports/10-23-2020.csv') and WDI R package, I selected columns of "country", "confirmed", "death" and "population", while deleting all else. These variables were also scaled for checking log-transformation. Also, I deleted countries with missing values of population, confirmed cases or death, which may raise potential data quality issue, as some countires are missing.
+With data from [CSSE]('https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_daily_reports/10-23-2020.csv') and WDI R package, I selected columns of "country", "confirmed", "death" and "population", while deleting all else. These variables were also scaled for checking log-transformation. Also, I deleted countries with missing values of the population, confirmed cases or death, which may raise potential data quality issue, as some countries are missing.
 
 ```{r, include=FALSE}
 # clean and load packages for subsequent analysis and ploting.
@@ -24,16 +25,16 @@ library(texreg)
 library(ggthemes)
 
 # Call the data from local
-my_url <- "/Users/wodediannao/Desktop/ECBS-5208-Coding-1-Business-Analytics/assignment_covid/Data/clean/covid_pop_23_10_2020_clean.csv"
+my_url <- "/Users/wodediannao/Desktop/Covid_Analysis/Data/clean/covid_pop_23_10_2020_clean.csv"
 df <- read_csv( my_url )
 ```
 # Pattern of Association
 
 Main Feature of Histograms:
 
-* For confirmed cases, most of the distribution is between 4 and 100,000 cases, with few observations above 7,500,000. For Death cases, most of the distribution falls within (0, 2000), with few observations above 5,000.
-* Both distributions are skewed, with a long right tail.
-* For confirmed cases, there is an extreme value above 800,000; for death cases, there is an extreme value above 220,000. We should not drop them.
+* For confirmed cases, most of the distribution is between 4 and 100,000 cases, with a few observations above 7,500,000. For Death cases, most of the distribution falls within (0, 2000), with a few observations above 5,000.
+* Both distributions are skewed, with a long right tail, with mean value much larger than the median value.
+* For confirmed cases, there is an extreme value above 8,000,000; for death cases, there is an extreme value above 220,000. We should not drop them.
 
 # Transformation of Variables
 ```{r, include= F}
@@ -53,21 +54,21 @@ Variables are transformed by taking natural logarithms, and there are four model
 * log-log: ln_death = alpha + beta * ln_confirmed (Figure 4, in Appendix)
 
 
-My final decisioin is the log-log model:
+My final decision is the log-log model:
 
 * Substantive reasoning:
-  * Log transfomation of cases may remain valid in spite of pandemic waves and other seasonal fluctuations.
+  * Log transformation of cases may remain valid in spite of pandemic waves and other seasonal fluctuations.
   * Also, choosing relative terms means being free from arbitrary units of measurement.
 * Statistical reasoning:
   * Log-log model graph captures gives better approximation: the scatter plot suggests a good linear pattern.
-  * Even though level-level model has a higher R-square, compared with level-log, its graph shows highly non-linear pattern. Compared with Log-level, log-log model has a relatively higher R-square.
+  * Even though level-level model has a higher R-square, compared with level-log, its graph shows a highly non-linear pattern. Compared with Log-level, log-log model has a relatively higher R-square.
 
 
 # Presentation of model choice
 
 * My final decision is Simple Regression: ln_death = -4.319 + 1.029 * ln_confirmed
 * When ln(confirmed cases) is zero, average ln(death cases) is -4.319, on average.
-* For observations having one percent higher confirmed cases, death cases is 1.029% higher, on average.
+* For observations having one percent higher confirmed case, death cases are 1.029% higher, on average.
 
 # Analysis of Hypothesis Testing 
 I am interested in $H_0: \beta = 0, \, H_A: \beta \neq 0$ or not in the model, with 5% significance level. 
@@ -80,9 +81,9 @@ hp_test <- summary(reg1)
 ```{r}
 hp_test
 ```
-* The estimated t-statistics is 35.16, with 95% confidence interval: [-4.94,-3.70] and p-value: 2.250267e-79 
-* The confidence interval does not contain zero, So true value of coefficient is unlikely to be zero.
-* Also, p value is way below 5%. Thus we reject the $H_0$, which means the death cases is not uncorrelated with confirmed cases. 
+* The estimated t-statistics are 35.16, with 95% confidence interval: [-4.94,-3.70] and p-value: 2.250267e-79 
+* The confidence interval does not contain zero, So true value of the coefficient is unlikely to be zero.
+* Also, the p value is way below 5%. Thus we reject the $H_0$, which means the death cases is not uncorrelated with confirmed cases. 
 
 
 # Analysis of the residuals
@@ -113,8 +114,8 @@ print(pos5)
 # Executive summary
 
 * Through investigation, the report analyzed the association between global registered number of confirmed and death covid-19 cases on 23rd, Oct.2020. There is a positive correlation between registered number of confirmed and death covid-19 cases. 
-* The final model is ln(death)~ln(confirmed), which reveals death cases is 1.03 percent higher, on average, for observations having 1 percent higher confirmed cases.
-* The analysis can be strengthened by invention and promotion of vaccines. Also, it might be weakened by some countries hiding true case numebers, or part of death cases caused by other pneumonia disease that are similar to Covid.
+* The final model is ln(death)~ln(confirmed), which reveals death cases are 1.03 percent higher, on average, for observations having 1 percent higher confirmed cases.
+* The analysis can be strengthened by the invention and promotion of vaccines. Also, it might be weakened by some countries hiding true case numbers, or part of death cases caused by other pneumonia disease that are similar to Covid.
 
 \newpage        
 
@@ -135,49 +136,46 @@ df %>%
 
 summary( df %>% select(confirmed, death) )
 ```
-## 1) death - confirmed: level-level model without scaling
+## 1) Figure 1, death - confirmed: level-level model without scaling
 ```{r}
-
 ggplot( df , aes(y = death, x = confirmed)) +
   geom_point() +
   geom_smooth(method="loess")+
   scale_x_continuous(
     breaks = pretty_breaks()) +
   scale_y_continuous(breaks = pretty_breaks()) +
-  labs(y = "Registered death(count in thousands)", 
-       x = "Registered case(count in millions, 2020-10-23)",
-       title = "Confirmed covid cases and death cases, 2020-10-23") 
+  labs(y = "Death Case", 
+       x = "Confirmed Case ") 
 ```
-## 2) ln_death - confirmed: log-level model
+## 2) Figure 2,ln_death - confirmed: log-level model
 ```{r}
 
 ggplot( df , aes(y = death, x = confirmed ))  +
   geom_point() +
   geom_smooth(method="loess")+
-  labs(y = "Registered death",x = "Registered case(2020-10-23, ln scale )") +
-  scale_y_continuous( trans = log_trans(), breaks = pretty_breaks())
+  labs(y = "Death Case(ln scale)",x = "Confirmed Case(2020-10-23)") +
+  scale_y_continuous( trans = log_trans(), breaks = c(0,1000,5000,20000, 9000000))+
+  scale_x_continuous(breaks = c(200000,1000000,8000000))
 ```
 
-## 3) death - ln_confirmed: level-log model
+## 3) Figure 3,death - ln_confirmed: level-log model
 ```{r}
 
 ggplot( df , aes(y = death, x = confirmed)) +
   geom_point() +
   geom_smooth(method="loess")+
-  labs(y = "Registered death",x = "Registered case(2020-10-23, ln scale )") +
-  scale_x_continuous( trans = log_trans(), waiver(), 
-                      breaks = pretty_breaks()) +
-  scale_y_continuous(breaks = pretty_breaks()) 
+  labs(y = "Death Case",x = "Confirmed Case(2020-10-23, ln scale )") +
+  scale_x_continuous( trans = log_trans(), breaks = c(0,400000,8000000)) 
 ```
-## 4) ln_death - ln_confirmed: log-log model
+## 4) Figure 4,ln_death - ln_confirmed: log-log model
 ```{r}
 
 ggplot( df , aes(y = death, x = confirmed ))  +
   geom_point() +
   geom_smooth(method="loess")+
-  labs(y = "Registered death",x = "Registered case(2020-10-23, ln scale )") +
-  scale_x_continuous( trans = log_trans(),breaks= pretty_breaks())+
-  scale_y_continuous( trans = log_trans(),breaks = pretty_breaks())
+  labs(y = "Death Case(ln scale)",x = "Confirmed Case(2020-10-23, ln scale)") +
+  scale_x_continuous( trans = log_trans(),waiver(), breaks = c(0,400,20000,120000, 1200000))+
+  scale_y_continuous( trans = log_trans(),waiver(), breaks = c(0,2,100,8000,400000))
 ```
 
 # Model Estimation
@@ -194,7 +192,9 @@ summary( reg1 )
 # Visual inspection:
 ggplot( data = df, aes( x = ln_confirmed, y = ln_death) ) + 
   geom_point( color="#C4961A") +
-  geom_smooth( method = lm , color = "steelblue")
+  geom_smooth( method = lm , color = "steelblue") +
+  labs(y = "Death Cases(in scale)", 
+       x = "Confirmed Cases(in scale, 2020-10-23)") 
 ```
 
 
@@ -208,7 +208,9 @@ summary( reg2 )
 # Visual inspection:
 ggplot( data = df, aes( x = ln_confirmed, y = ln_death ) ) + 
   geom_point( color="#C4961A") +
-  geom_smooth( formula = y ~ poly(x,2) , method = lm , color = "steelblue")
+  geom_smooth( formula = y ~ poly(x,2) , method = lm , color = "steelblue") +
+  labs(y = "Death Cases(in scale)", 
+       x = "Confirmed Cases(in scale, 2020-10-23)") 
 
 ```
 
@@ -216,13 +218,16 @@ ggplot( data = df, aes( x = ln_confirmed, y = ln_death ) ) +
 
 ln_death = alpha + beta_1 * ln_confirmed * 1(ln_confirmed <= 8) + beta_2 * ln_confirmed * 1(8 < ln_confirmed <= 12) + beta_3 * ln_confirmed * 1(12 < ln_confirmed <= 16) 
 ```{r}
+
 reg3 <- lm_robust(ln_death ~ lspline( ln_confirmed , c(8,12,14)), data = df )
 # Summary statistics
 summary(reg3)
 # Visual inspection:
 ggplot( data = df, aes( x = ln_confirmed, y = ln_death ) ) + 
   geom_point(color = "#C4961A") +
-  geom_smooth( formula = y ~ lspline(x, c(8,12,14)) , method = lm , color = "steelblue" )
+  geom_smooth( formula = y ~ lspline(x, cutoff) , method = lm , color = "steelblue" ) +
+  labs(y = "Death Cases(in scale)", 
+       x = "Confirmed Cases(in scale, 2020-10-23)") 
 ```
 
 
@@ -239,32 +244,33 @@ ggplot(data = df, aes(x = ln_confirmed, y = ln_death)) +
   geom_smooth(aes(weight = population), method = "lm", color= "steelblue")+
   scale_size(range = c(1, 15)) +
   coord_cartesian(ylim = c(0, 12.5)) +
-  labs(x = "Registered case(2020-10-23, ln scale) ", y = "Registered death(in scale)") +
+  labs(y = "Death Cases(in scale)", 
+       x = "Confirmed Cases(in scale, 2020-10-23)") +
   annotate("text", x = 16, y = 11, label = "India", size=5)+
   annotate("text", x = 11, y = 8, label = "China", size=5)+
   annotate("text", x = 16,  y = 12.75, label = "USA", size=5) +
   annotate("text", x = 15.05,  y = 12, label = "Brazil", size=5) 
 ```
 
-## Summary of All models
-![model comparision](/Users/wodediannao/Desktop/ECBS-5208-Coding-1-Business-Analytics/assignment_covid/Out/model_comparison.png)
+# Summary of All models
+![model comparision](/Users/wodediannao/Desktop/Covid_Analysis/Out/model_comparison.png)
 
 ## Model Summaries
 
-With model comparision table and plot visualization, we can conclude:
+With model comparison table and plot visualization, we can conclude:
 
 * For linear regression:
-  *  For observations having one percent higher confirmed cases, death cases is 1.029% higher, on average.
+  *  For observations having one percent higher confirmed case, death cases are 1.029% higher, on average.
   * r-square = 0.89 means 89% of the variation in ln(death cases) is captured by the regression, and 11% is left for residual variation.
-* For quadratic regressioin:
+* For quadratic regression:
   * 0.02 is positive; so the relationship is convex
   * r-square = 0.89 means 89% of the variation in ln(death cases) is captured by the regression, and 11% is left for residual variation.
 * For Piecewise linear spline regression:
-  * Among obervations with ln(confirmed_case) values less than 8, ln(death_cases) is 0.92 units higher, on average, for observations with one unit higher ln(confirmed_case) value.
-  * Among obervations with ln(confirmed_case) values between 8 and 12, ln(death_cases) is 0.96 units higher, on average, for observations with one unit higher ln(confirmed_case) value.
-  * Among obervations with ln(confirmed_case) values between 12 and 14, ln(death_cases) is 1.54 units higher, on average, for observations with one unit higher ln(confirmed_case) value.
-  * Among obervations with ln(confirmed_case) values above 14, ln(death_cases) is 0.62 units higher, on average, for observations with one unit higher ln(confirmed_case) value.
-  * For Weighted linear regression: USA, Brazil and India have most servere covid pandemic situation.
+  * Among observations with ln(confirmed_case) values less than 8, ln(death_cases) is 0.92 units higher, on average, for observations with one unit higher ln(confirmed_case) value.
+  * Among observations with ln(confirmed_case) values between 8 and 12, ln(death_cases) is 0.96 units higher, on average, for observations with one unit higher ln(confirmed_case) value.
+  * Among observations with ln(confirmed_case) values between 12 and 14, ln(death_cases) is 1.54 units higher, on average, for observations with one unit higher ln(confirmed_case) value.
+  * Among observations with ln(confirmed_case) values above 14, ln(death_cases) is 0.62 units higher, on average, for observations with one unit higher ln(confirmed_case) value.
+  * For Weighted linear regression: USA, Brazil and India are in the most severe covid pandemic situations.
 
 ## Final Choice
 Based on model comparison, my chosen model is reg1(ln_death ~ ln_confirmed):
@@ -272,5 +278,5 @@ Based on model comparison, my chosen model is reg1(ln_death ~ ln_confirmed):
 * Substantive: 
   * The other three make little change to what is basically a linear association: they are over-complicated, to some degree. 
 * Statistical: 
-  * Conpared with other three, simple regression(log-log) model is easy to interpret.
-  * Log-log model has comparatively high R-square and captures variation well.
+  * Compared with other three, simple regression(log-log) model is easy to interpret.
+  * Log-log model has a comparatively high R-square and captures variation well.

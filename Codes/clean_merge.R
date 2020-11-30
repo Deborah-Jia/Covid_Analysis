@@ -12,7 +12,7 @@ rm(list=ls())
 library(tidyverse)
 
 # Read the raw files
-my_path <- "~/Desktop/ECBS-5208-Coding-1-Business-Analytics/assignment_covid/Data/raw/"
+my_path <- "/Users/wodediannao/Desktop/Covid_Analysis/Data/raw/"
 # covid data
 cv <- read_csv(paste0(my_path,'covid_23_10_2020_raw.csv'))
 # population data
@@ -132,7 +132,7 @@ df <- df %>% filter( !( is.na( population ) | is.na( confirmed ) | is.na( death 
 
 #####
 # Save clean data
-my_path <- "~/Desktop/ECBS-5208-Coding-1-Business-Analytics/assignment_covid/Data/clean/"
+my_path <- "/Users/wodediannao/Desktop/Covid_Analysis/Data/clean/"
 # COVID data
 write_csv( df , paste0(my_path,'covid_pop_23_10_2020_clean.csv'))
 

@@ -35,7 +35,7 @@ library(texreg)
 library(ggthemes)
 
 # Call the data from github
-my_url <- "/Users/wodediannao/Desktop/ECBS-5208-Coding-1-Business-Analytics/assignment_covid/Data/clean/covid_pop_23_10_2020_clean.csv"
+my_url <- "/Users/wodediannao/Desktop/Covid_Analysis/Data/clean/covid_pop_23_10_2020_clean.csv"
 df <- read_csv( my_url )
 
 
@@ -183,7 +183,7 @@ ggplot(data = df, aes(x = ln_confirmed, y = ln_death)) +
 
 #####
 # Creating model summary with texreg
-data_out <- "~/Desktop/ECBS-5208-Coding-1-Business-Analytics/assignment_covid/Out/"
+data_out <- "/Users/wodediannao/Desktop/Covid_Analysis/Out/"
 
 htmlreg( list(reg1 , reg2 , reg3 , reg4),
          type = 'html',
@@ -210,3 +210,4 @@ df %>% top_n( -5 , reg1_res ) %>%
 # Find countries with largest positive errors
 df %>% top_n( 5 , reg1_res ) %>% 
   select( country , ln_death,ln_death_pred,reg1_res)
+
